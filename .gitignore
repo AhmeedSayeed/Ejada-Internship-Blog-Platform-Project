@@ -52,3 +52,44 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Visual Studio specific files and directories
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.rsuser
+
+# Build results and compiled outputs
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# ASP.NET Core specific local settings and logs
+# Ignore local development settings that might contain personal database connection strings or secrets
+appsettings.Development.json
+appsettings.Local.json
+*.log
+
+# NuGet packages directory (if local)
+packages/
+*.nupkg
+
+# Rider / JetBrains specific (Useful if someone on the team uses Rider)
+.idea/
+*.sln.iml
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
