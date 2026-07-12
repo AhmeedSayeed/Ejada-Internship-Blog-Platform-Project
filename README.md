@@ -1,0 +1,2 @@
+# Ejada Internship Blog Project
+
