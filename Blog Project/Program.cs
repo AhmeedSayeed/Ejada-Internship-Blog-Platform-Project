@@ -1,12 +1,15 @@
 
 using Blog_Project.Data;
+using Blog_Project.Domain.Models;
+using Blog_Project.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog_Project
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -20,11 +23,22 @@ namespace Blog_Project
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = false; //
+            })  
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
 
 
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            await app.SeedRolesAsync();
 
             if (app.Environment.IsDevelopment())
             {
