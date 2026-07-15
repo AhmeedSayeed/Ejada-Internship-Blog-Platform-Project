@@ -27,5 +27,15 @@ namespace Blog_Project.Domain.Models
 
         public int? ReviewedByAdminId { get; set; }
         public ApplicationUser? ReviewedByAdmin { get; set; }
+
+        public ICollection<Like> Likes { get; set; } = new List<Like>();
+
+        public ICollection<Rating> Ratings { get; set; } = new List<Rating>();
+
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+        public ICollection<PostTag> PostTags { get; set; } = new List<PostTag>();
+
+        public ICollection<PostImage> Images { get; set; } = new List<PostImage>();
     }
 }

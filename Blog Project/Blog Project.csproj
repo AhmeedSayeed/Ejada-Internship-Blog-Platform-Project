@@ -35,7 +35,6 @@
 
 	<ItemGroup>
 		<Folder Include="Api\Controllers\" />
-		<Folder Include="Api\" />
 		<Folder Include="Application\Interfaces\" />
 		<Folder Include="Application\DTOs\" />
 		<Folder Include="Application\Services\" />

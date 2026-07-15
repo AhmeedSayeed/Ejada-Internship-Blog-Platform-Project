@@ -14,5 +14,15 @@ namespace Blog_Project.Domain.Models
         public ICollection<Post> Posts { get; set; } = new List<Post>();
 
         public ICollection<Post> ReviewedPosts { get; set; } = new List<Post>();
+
+        public ICollection<Follow> Following { get; set; } = new List<Follow>();
+
+        public ICollection<Follow> Followers { get; set; } = new List<Follow>();
+
+        public ICollection<Like> Likes { get; set; } = new List<Like>();
+
+        public ICollection<Rating> Ratings { get; set; } = new List<Rating>();
+
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

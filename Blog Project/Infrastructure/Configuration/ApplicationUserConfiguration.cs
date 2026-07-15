@@ -15,7 +15,7 @@ namespace Blog_Project.Infrastructure.Configuration
                 .HasDefaultValue(false);
 
             builder.Property(u => u.CreatedAt)
-                .HasDefaultValueSql("GETDATE()");
+                .HasDefaultValueSql("GETUTCDATE()");
         }
     }
 }
