@@ -10,7 +10,7 @@ public record UpdateRatingDto(
     int Id,
     int Score
 );
-public record RatingDetailDto(
+public record RatingDetailsDto(
     int Id,
     int Score,
     int PostId,
