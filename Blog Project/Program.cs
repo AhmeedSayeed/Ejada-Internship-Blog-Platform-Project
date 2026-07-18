@@ -32,7 +32,9 @@ namespace Blog_Project
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
-
+            ApplicationUser adminUser = new ApplicationUser();
+           adminUser.
+          
 
             builder.Services.AddSwaggerGen();
 
