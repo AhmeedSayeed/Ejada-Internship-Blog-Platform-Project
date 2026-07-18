@@ -31,9 +31,7 @@ namespace Blog_Project
             })  
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-
-
-
+          
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
