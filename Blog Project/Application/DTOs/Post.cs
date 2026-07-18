@@ -1,15 +1,24 @@
 ﻿namespace Blog_Project.Application.DTOs;
 
 public record CreatePostDto(
-            string Title,
-            string Content,
-            int? CategoryId
-         );
-public record UpdatePostDto(
+    int AuthorId,
     string Title,
     string Content,
     int? CategoryId
 );
+
+public record UpdatePostDto(
+    int PostId,
+    string Title,
+    string Content,
+    int? CategoryId
+);
+
+public record UpdatePostStatusDto(
+    string Status,
+    int? ReviewedByAdminId
+);
+
 public record PostDto(
     int Id,
     string Title,
@@ -17,8 +26,9 @@ public record PostDto(
     string? Category,
     double AvgRating,
     int ViewCount,
-    DateTime CreatedAt
+    DateTime LastUpdateAt
 );
+
 public record PostDetailsDto(
     int Id,
     string Title,
