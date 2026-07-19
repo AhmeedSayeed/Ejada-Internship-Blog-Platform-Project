@@ -1,0 +1,7 @@
+# Use this workspace to collaborate
+workspace:
+  id: fd34f08c-a58e-44c0-88a5-5a57c2907239
+
+localResources:
+  specs:
+    - ..\Blog Project\obj\Debug\net10.0\EndpointInfo\Blog Project.json
