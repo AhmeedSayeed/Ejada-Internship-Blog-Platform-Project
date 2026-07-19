@@ -12,14 +12,24 @@ namespace Application.Interfaces;
 public interface IRepository<TEntity, TKey> where TEntity : class
 {
     // ---------- Reads ----------
-    Task<TEntity?> GetByIdAsync(TKey id, CancellationToken ct = default);
-    Task<TEntity?> GetByIdAsync(TKey id, params Expression<Func<TEntity, object>>[] includes);
+    Task<TEntity?> GetByIdAsync(TKey id, CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes);
 
-    Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken ct = default);
-    Task<IReadOnlyList<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default);
+    Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes);
+    Task<IReadOnlyList<TEntity>> FindAsync(
+        Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes);
 
     Task<TEntity?> SingleOrDefaultAsync(ISpecification<TEntity> spec, CancellationToken ct = default);
     Task<IReadOnlyList<TEntity>> ListAsync(ISpecification<TEntity> spec, CancellationToken ct = default);
+
+    Task<TEntity?> FirstOrDefaultAsync(
+        Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes);
+    Task<TEntity?> SingleOrDefaultAsync(
+        Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes);
+
+    Task<IReadOnlyList<TEntity>> GetByIdsAsync(
+        IEnumerable<TKey> ids, CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes);
+
+    IQueryable<TEntity> Query(bool asNoTracking = true);
 
     Task<PagedResult<TEntity>> GetPagedAsync(
         int pageIndex, int pageSize, ISpecification<TEntity>? spec = null, CancellationToken ct = default);

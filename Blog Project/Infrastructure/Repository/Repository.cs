@@ -1,6 +1,9 @@
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 using Application.Interfaces;
+using Infrastructure.Specifications;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+
+using System.Linq.Expressions;
 
 namespace Infrastructure.Repository;
 
@@ -17,41 +20,83 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntit
         DbSet = context.Set<TEntity>();
     }
 
-    public virtual async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken ct = default)
-        => await DbSet.FindAsync(new object?[] { id }, ct);
-
-    public virtual async Task<TEntity?> GetByIdAsync(TKey id, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes)
     {
+        if (includes.Length == 0)
+            return await DbSet.FindAsync(new object?[] { id }, ct);
+
         IQueryable<TEntity> query = DbSet;
         query = includes.Aggregate(query, (current, include) => current.Include(include));
 
         var keyProperty = Context.Model.FindEntityType(typeof(TEntity))!
             .FindPrimaryKey()!.Properties[0].Name;
 
-        return await query.FirstOrDefaultAsync(e => Equals(EF.Property<TKey>(e, keyProperty), id));
+        return await query.FirstOrDefaultAsync(e => Equals(EF.Property<TKey>(e, keyProperty), id), ct);
     }
 
-    public virtual async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken ct = default)
-        => await DbSet.AsNoTracking().ToListAsync(ct);
+    public virtual async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes)
+    {
+        IQueryable<TEntity> query = DbSet.AsNoTracking();
+        query = includes.Aggregate(query, (current, include) => current.Include(include));
+        return await query.ToListAsync(ct);
+    }
 
     public virtual async Task<IReadOnlyList<TEntity>> FindAsync(
-        Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default)
-        => await DbSet.AsNoTracking().Where(predicate).ToListAsync(ct);
+        Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes)
+    {
+        IQueryable<TEntity> query = DbSet.AsNoTracking().Where(predicate);
+        query = includes.Aggregate(query, (current, include) => current.Include(include));
+        return await query.ToListAsync(ct);
+    }
 
     public virtual async Task<TEntity?> SingleOrDefaultAsync(ISpecification<TEntity> spec, CancellationToken ct = default)
-        => await ApplySpec(spec).FirstOrDefaultAsync(ct);
+        => await ApplySpec(spec).SingleOrDefaultAsync(ct);
 
     public virtual async Task<IReadOnlyList<TEntity>> ListAsync(ISpecification<TEntity> spec, CancellationToken ct = default)
         => await ApplySpec(spec).ToListAsync(ct);
 
+    public virtual async Task<TEntity?> FirstOrDefaultAsync(
+        Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes)
+    {
+        IQueryable<TEntity> query = DbSet.Where(predicate);
+        query = includes.Aggregate(query, (current, include) => current.Include(include));
+        return await query.FirstOrDefaultAsync(ct);
+    }
+
+    public virtual async Task<TEntity?> SingleOrDefaultAsync(
+        Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes)
+    {
+        IQueryable<TEntity> query = DbSet.Where(predicate);
+        query = includes.Aggregate(query, (current, include) => current.Include(include));
+        return await query.SingleOrDefaultAsync(ct);
+    }
+
+    public virtual async Task<IReadOnlyList<TEntity>> GetByIdsAsync(
+        IEnumerable<TKey> ids, CancellationToken ct = default, params Expression<Func<TEntity, object>>[] includes)
+    {
+        var idList = ids as ICollection<TKey> ?? ids.ToList();
+        var keyProperty = Context.Model.FindEntityType(typeof(TEntity))!
+            .FindPrimaryKey()!.Properties[0].Name;
+
+        IQueryable<TEntity> query = DbSet.AsNoTracking()
+            .Where(e => idList.Contains(EF.Property<TKey>(e, keyProperty)));
+
+        query = includes.Aggregate(query, (current, include) => current.Include(include));
+
+        return await query.ToListAsync(ct);
+    }
+
+    public virtual IQueryable<TEntity> Query(bool asNoTracking = true)
+        => asNoTracking ? DbSet.AsNoTracking() : DbSet;
+
     public virtual async Task<PagedResult<TEntity>> GetPagedAsync(
         int pageIndex, int pageSize, ISpecification<TEntity>? spec = null, CancellationToken ct = default)
     {
-        var countQuery = spec is null ? DbSet.AsQueryable() : ApplySpec(spec, applyPaging: false);
-        var totalCount = await countQuery.CountAsync(ct);
+        var query = spec is null ? DbSet.AsQueryable() : ApplySpec(spec, applyPaging: false);
 
-        var itemsQuery = spec is null ? DbSet.AsQueryable() : ApplySpec(spec, applyPaging: false);
-        var items = await itemsQuery
+        var totalCount = await query.CountAsync(ct);
+
+        var items = await query
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(ct);
@@ -93,16 +138,7 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntit
         var entity = await GetByIdAsync(id, ct);
         if (entity is null) return false;
 
-        if (entity is ISoftDelete softDeletable)
-        {
-            softDeletable.IsDeleted = true;
-            softDeletable.DeletedAt = DateTime.UtcNow;
-            Update(entity);
-        }
-        else
-        {
-            Remove(entity);
-        }
+        Remove(entity);
 
         return true;
     }
