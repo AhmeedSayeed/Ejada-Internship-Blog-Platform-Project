@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Application.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace Application.Specifications;
+namespace Infrastructure.Specifications;
 
 public static class SpecificationEvaluator<T> where T : class
 {
