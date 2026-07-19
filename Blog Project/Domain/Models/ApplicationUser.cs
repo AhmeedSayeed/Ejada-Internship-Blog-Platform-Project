@@ -24,5 +24,7 @@ namespace Blog_Project.Domain.Models
         public ICollection<Rating> Ratings { get; set; } = new List<Rating>();
 
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }
