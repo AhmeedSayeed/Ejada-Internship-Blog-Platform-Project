@@ -1,9 +1,19 @@
 
+using Application.Interfaces;
+using Blog_Project.Application.Filters;
+using Blog_Project.Application.Interfaces;
+using Blog_Project.Application.Mappings;
+using Blog_Project.Application.Services;
 using Blog_Project.Data;
 using Blog_Project.Domain.Models;
 using Blog_Project.Extensions;
+using Infrastructure.Repository;
+using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Blog_Project
 {
@@ -14,7 +24,10 @@ namespace Blog_Project
             var builder = WebApplication.CreateBuilder(args);
 
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<ValidationFilter>();
+            });
 
 
             // DbContext Configuration
@@ -22,16 +35,48 @@ namespace Blog_Project
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            builder.Services.AddScoped<DbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedEmail = false; //
-            })  
+            })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-          
+
+            builder.Services.AddAutoMapper(config =>
+            {
+                config.AddProfile<UserProfile>();
+            });
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]!)),
+
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
+            builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
@@ -46,6 +91,7 @@ namespace Blog_Project
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
