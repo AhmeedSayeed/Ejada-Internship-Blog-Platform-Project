@@ -9,9 +9,10 @@ namespace Blog_Project.Application.Mappings
         public UserProfile() 
         {
             CreateMap<RegisterRequestDto, ApplicationUser>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
+
+            CreateMap<ApplicationUser, UserSummaryDto>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<ApplicationUser, MyProfileResponseDto>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
