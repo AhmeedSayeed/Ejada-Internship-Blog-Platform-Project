@@ -42,23 +42,23 @@ namespace Blog_Project.Application.Services
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description);
-                return new AuthResult(false, null, null, errors);
+                return new AuthResult { IsSuccess = false, AccessToken = null, RefreshToken = null, Errors = errors };
             }
 
             await _userManager.AddToRoleAsync(user, "Reader");
 
-            return new AuthResult(true, null, null, null);
+            return new AuthResult { IsSuccess = true, AccessToken = null, RefreshToken = null, Errors = null };
         }
 
         public async Task<AuthResult> LoginAsync(LoginRequestDto loginRequest)
         {
             var user = await _userManager.FindByEmailAsync(loginRequest.Email);
             if (user is null)
-                return new AuthResult(false, null, null, new List<string> { "Invalid email or password." });
+                return new AuthResult { IsSuccess = false, AccessToken = null, RefreshToken = null, Errors = new List<string> { "Invalid email or password." } };
 
             var isValidPassword = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
             if (!isValidPassword)
-                return new AuthResult(false, null, null, new List<string> { "Invalid email or password." });
+                return new AuthResult { IsSuccess = false, AccessToken = null, RefreshToken = null, Errors = new List<string> { "Invalid email or password." } };
 
             var accessToken = await GenerateJwtTokenAsync(user);
             var refreshToken = GenerateRefreshToken(user.Id);
@@ -66,7 +66,7 @@ namespace Blog_Project.Application.Services
             await _unitOfWork.Repository<RefreshToken, int>().AddAsync(refreshToken);
             await _unitOfWork.SaveChangesAsync();
 
-            return new AuthResult(true, accessToken, refreshToken.Token, null);
+            return new AuthResult { IsSuccess = true, AccessToken = accessToken, RefreshToken = refreshToken.Token, Errors = null };
         }
 
         public async Task<AuthResult> RefreshTokenAsync(string refreshToken)
@@ -75,7 +75,7 @@ namespace Blog_Project.Application.Services
                 .SingleOrDefaultAsync(rt => rt.Token == refreshToken, includes: rt => rt.User);
 
             if (oldToken is null || !oldToken.IsActive)
-                return new AuthResult(false, null, null, new List<string> { "Invalid refresh token." });
+                return new AuthResult { IsSuccess = false, AccessToken = null, RefreshToken = null, Errors = new List<string> { "Invalid refresh token." } };
 
             await _unitOfWork.BeginTransactionAsync();
 
@@ -88,14 +88,14 @@ namespace Blog_Project.Application.Services
 
             await _unitOfWork.CommitTransactionAsync();
 
-            return new AuthResult(true, newAccessToken, newRefreshToken.Token, null);
+            return new AuthResult { IsSuccess = true, AccessToken = newAccessToken, RefreshToken = newRefreshToken.Token, Errors = null };
         }
 
         public async Task<bool> LogoutAsync(string refreshToken)
         {
             var oldToken = await _unitOfWork.Repository<RefreshToken, int>()
                 .SingleOrDefaultAsync(rt => rt.Token == refreshToken);
-            
+
             if (oldToken is null || !oldToken.IsActive)
                 return false;
 

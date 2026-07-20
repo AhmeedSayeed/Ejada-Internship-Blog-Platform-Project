@@ -1,6 +1,7 @@
 ﻿using Blog_Project.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Blog_Project.Domain.Constants;
 
 namespace Blog_Project.Infrastructure.Configurations
 {
@@ -12,13 +13,13 @@ namespace Blog_Project.Infrastructure.Configurations
 
             builder.Property(c => c.Name)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(ValidationConstants.CategoryNameMaxLength);
 
             builder.HasIndex(c => c.Name)
                 .IsUnique();
 
             builder.Property(c => c.Description)
-                .HasMaxLength(250);
+                .HasMaxLength(ValidationConstants.CategoryDescriptionMaxLength);
 
             builder.HasData(
                 new Category { Id = 1, Name = "Technology", Description = "Latest technology news and innovations." },

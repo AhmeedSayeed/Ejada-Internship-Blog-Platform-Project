@@ -7,5 +7,6 @@
         public const string Reader = "Reader";
 
         public static readonly string[] AllRoles = { Admin, Author, Reader };
+        public static readonly string[] SelfRegisterable = { Reader, Author };
     }
 }

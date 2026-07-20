@@ -1,5 +1,6 @@
 ﻿using Blog_Project.Application.DTOs;
 using Blog_Project.Application.Interfaces;
+using Blog_Project.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,9 @@ namespace Blog_Project.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterRequestDto dto)
         {
+            if (!AppRoles.SelfRegisterable.Contains(dto.Role))
+                return BadRequest(new { Message = "Invalid role for self-registration." });
+
             var result = await authService.RegisterAsync(dto);
 
             if (!result.IsSuccess)
@@ -34,7 +38,7 @@ namespace Blog_Project.Api.Controllers
             if (!result.IsSuccess)
                 return Unauthorized(result.Errors);
 
-            return Ok(new AuthResponseDto(result.AccessToken!, result.RefreshToken!));
+            return Ok(new AuthResponseDto { AccessToken = result.AccessToken!, RefreshToken = result.RefreshToken! });
         }
 
         // POST api/<AuthController>/refresh-token
@@ -47,7 +51,7 @@ namespace Blog_Project.Api.Controllers
             if (!result.IsSuccess)
                 return Unauthorized(result.Errors);
 
-            return Ok(new AuthResponseDto(result.AccessToken!, result.RefreshToken!));
+            return Ok(new AuthResponseDto { AccessToken = result.AccessToken!, RefreshToken = result.RefreshToken! });
         }
 
         // POST api/<AuthController>/logout

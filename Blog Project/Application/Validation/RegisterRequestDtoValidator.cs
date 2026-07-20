@@ -1,5 +1,6 @@
 ﻿using Blog_Project.Application.DTOs;
 using FluentValidation;
+using Blog_Project.Domain.Constants;
 
 namespace Blog_Project.Application.Validation
 {
@@ -12,11 +13,11 @@ namespace Blog_Project.Application.Validation
                 .EmailAddress().WithMessage("Invalid email format.");
 
             RuleFor(x => x.UserName)
-                .MinimumLength(3).WithMessage("Username must be at least 3 characters long.");
+                .MinimumLength(ValidationConstants.UsernameMinLength).WithMessage($"Username must be at least {ValidationConstants.UsernameMinLength} characters long.");
 
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required.")
-                .MinimumLength(8).WithMessage("Password must be at least 8 characters long.")
+                .MinimumLength(ValidationConstants.PasswordMinLength).WithMessage($"Password must be at least {ValidationConstants.PasswordMinLength} characters long.")
                 .Must(password =>
                 {
                     return password.Any(char.IsUpper) &&

@@ -1,6 +1,7 @@
 ﻿using Blog_Project.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Blog_Project.Domain.Constants;
 
 namespace Blog_Project.Infrastructure.Configuration
 {
@@ -12,7 +13,7 @@ namespace Blog_Project.Infrastructure.Configuration
 
             builder.Property(t => t.Name)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(ValidationConstants.TagNameMaxLength);
 
             builder.HasIndex(t => t.Name)
                 .IsUnique();

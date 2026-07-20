@@ -4,4 +4,4 @@ workspace:
 
 localResources:
   specs:
-    - ..\Blog Project\obj\Debug\net10.0\EndpointInfo\Blog Project.json
+    - ../Blog Project/obj/Debug/net10.0/EndpointInfo/Blog Project.json

@@ -2,6 +2,7 @@
 using Blog_Project.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Blog_Project.Domain.Constants;
 
 namespace Blog_Project.Data.Configuration
 {
@@ -13,7 +14,7 @@ namespace Blog_Project.Data.Configuration
 
             builder.Property(p => p.Title)
                 .IsRequired()
-                .HasMaxLength(200);
+                .HasMaxLength(ValidationConstants.PostTitleMaxLength);
 
             builder.Property(p => p.Content)
                 .IsRequired();

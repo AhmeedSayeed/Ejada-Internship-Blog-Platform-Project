@@ -16,10 +16,10 @@ namespace Blog_Project.Application.DTOs
 
         private Result(bool isSuccess, Error error, T? value)
         {
-            if(isSuccess && error != Error.None)
+            if (isSuccess && error != Error.None)
                 throw new InvalidOperationException("A successful result cannot contain an error.");
 
-            if(IsFailure && error == Error.None)
+            if (!isSuccess && error == Error.None)
                 throw new InvalidOperationException("A failure result must contain an error.");
 
             IsSuccess = isSuccess;

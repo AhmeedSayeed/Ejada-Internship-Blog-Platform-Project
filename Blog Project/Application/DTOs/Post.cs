@@ -1,22 +1,19 @@
 ﻿namespace Blog_Project.Application.DTOs;
 
 public record CreatePostDto(
-    int AuthorId,
     string Title,
     string Content,
     int? CategoryId
 );
 
 public record UpdatePostDto(
-    int PostId,
     string Title,
     string Content,
     int? CategoryId
 );
 
 public record UpdatePostStatusDto(
-    string Status,
-    int? ReviewedByAdminId
+    string Status
 );
 
 public record PostDto(
