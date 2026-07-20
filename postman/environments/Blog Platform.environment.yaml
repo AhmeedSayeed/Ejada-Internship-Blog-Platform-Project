@@ -1,0 +1,25 @@
+name: Blog Platform
+values:
+  - key: baseUrl
+    value: ''
+  - key: readerToken
+    secret: true
+  - key: readerId
+    value: ''
+  - key: readerRefreshToken
+    value: ''
+  - key: readerEmail
+    value: ''
+  - key: readerPassword
+    value: ''
+  - key: authorToken
+    secret: true
+  - key: authorId
+    value: ''
+  - key: authorRefreshToken
+    value: ''
+  - key: authorEmail
+    value: ''
+  - key: authorPassword
+    value: ''
+color: 180

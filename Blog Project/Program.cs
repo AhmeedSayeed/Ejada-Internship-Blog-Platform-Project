@@ -7,6 +7,7 @@ using Blog_Project.Application.Services;
 using Blog_Project.Data;
 using Blog_Project.Domain.Models;
 using Blog_Project.Extensions;
+using FluentValidation;
 using Infrastructure.Repository;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,14 +43,10 @@ namespace Blog_Project
                 options.Password.RequiredLength = 8;
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedEmail = false; //
+                options.User.AllowedUserNameCharacters = string.Empty;
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-
-            builder.Services.AddAutoMapper(config =>
-            {
-                config.AddProfile<UserProfile>();
-            });
 
             builder.Services.AddAuthentication(options =>
             {
@@ -73,9 +70,18 @@ namespace Blog_Project
                 };
             });
 
+            builder.Services.AddAutoMapper(config =>
+            {
+                config.AddProfile<UserProfile>();
+                config.AddProfile<PostProfile>();
+            });
+
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
             builder.Services.AddSwaggerGen();
 
