@@ -7,6 +7,7 @@ using Blog_Project.Application.Services;
 using Blog_Project.Data;
 using Blog_Project.Domain.Models;
 using Blog_Project.Extensions;
+using Blog_Project.Infrastructure.FileStrorage;
 using FluentValidation;
 using Infrastructure.Repository;
 using Infrastructure.UnitOfWork;
@@ -83,6 +84,9 @@ namespace Blog_Project
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
+            builder.Services.Configure<FileStorageSettings>(builder.Configuration.GetSection("FileStorageSettings"));
+            builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
@@ -96,6 +100,8 @@ namespace Blog_Project
             }
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseAuthentication();
             app.UseAuthorization();
