@@ -10,9 +10,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Remove="Infrastructure\Mapping\**" />
 		<Compile Remove="Infrastructure\NewFolder1\**" />
+		<Content Remove="Infrastructure\Mapping\**" />
 		<Content Remove="Infrastructure\NewFolder1\**" />
+		<EmbeddedResource Remove="Infrastructure\Mapping\**" />
 		<EmbeddedResource Remove="Infrastructure\NewFolder1\**" />
+		<None Remove="Infrastructure\Mapping\**" />
 		<None Remove="Infrastructure\NewFolder1\**" />
 	</ItemGroup>
 
@@ -35,7 +39,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Infrastructure\Mapping\" />
 		<Folder Include="Infrastructure\Repository\" />
 	</ItemGroup>
 

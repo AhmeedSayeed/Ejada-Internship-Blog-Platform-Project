@@ -33,7 +33,8 @@ This document mirrors the original requirements doc: each section number matches
 | Method | Route | Auth | Description |
 |---|---|---|---|
 | GET | `/users/me` | Authorize | Own profile (name, email, bio, image) |
-| PUT | `/users/me` | Authorize | Edit name, email, bio, profile image, password |
+| PUT | `/users/me` | Authorize | Edit name, email, bio, password (text fields only — JSON body) |
+| POST | `/users/me/profile-image` | Authorize | Upload/replace profile image (`multipart/form-data`), returns new image URL |
 | GET | `/users/{id}` | none | Public author profile — name, image, published posts |
 | POST | `/users/{id}/follow` | Authorize (`Reader`) | Follow an author |
 | DELETE | `/users/{id}/follow` | Authorize | Unfollow |
@@ -48,7 +49,8 @@ This document mirrors the original requirements doc: each section number matches
 | PUT | `/posts/{id}` | Authorize (`Author`, owner) | Edit own post; writes a `PostEditHistory` snapshot |
 | DELETE | `/posts/{id}` | Authorize (`Author`, owner) | Soft-delete own post |
 | GET | `/posts/{id}` | none | Post detail |
-| POST | `/posts/{id}/images` | Authorize (`Author`, owner) | Upload an image, embed into rich-text content |
+| POST | `/posts/{id}/images` | Authorize (`Author`, owner) | Upload an image (`multipart/form-data`), returns URL to embed in rich-text content |
+| DELETE | `/posts/{postId}/images/{imageId}` | Authorize (`Author`, owner) | Remove an uploaded image and delete its file |
 
 ### 4. Post Listing & Filtering
 
@@ -151,3 +153,8 @@ This document mirrors the original requirements doc: each section number matches
 - Full request/response schemas aren't enumerated here — once controllers exist, Swagger/OpenAPI generates those automatically from the DTOs.
 - Endpoints marked "owner" require checking `AuthorId`/`UserId` against the authenticated user's ID, not just role membership — role alone doesn't prove ownership of a specific resource.
 - Delete-type endpoints assume the soft-delete/`IsDeleted` pattern already built into the generic repository, not a hard `DELETE FROM`.
+- Image upload endpoints (`/posts/{id}/images`, `/users/me/profile-image`) accept `multipart/form-data`, not JSON, and are saved locally via `IFileStorageService` under `wwwroot/uploads`. Response shape:
+  ```json
+  { "url": "/uploads/posts/a1b2c3d4.jpg" }
+  ```
+  The returned `url` is what gets stored in `PostImage.ImageUrl` / `ApplicationUser.ProfileImageUrl` — never a server file path.
