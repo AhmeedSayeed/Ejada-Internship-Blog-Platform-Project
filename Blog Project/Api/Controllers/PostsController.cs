@@ -11,6 +11,7 @@ namespace Blog_Project.Api.Controllers
     public class PostsController : ControllerBase
     {
         private readonly IPostService _postService;
+        private readonly IPostImgService postImgService;
         public PostsController(IPostService postService)
         {
             _postService = postService;
@@ -107,6 +108,19 @@ namespace Blog_Project.Api.Controllers
             { return Unauthorized(); }
             await _postService.RejectPostAsync(id, userId);
             return Ok(post);
+        }
+        [HttpPost("{id}/images")]
+        [Authorize(Roles = "Author")]
+        public async Task<IActionResult> UploadImage([FromForm]PostImageDto postimg)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var imageUrl = await postImgService.UploadPostImageAsync(userId,postimg);
+
+            return Ok(new
+            {
+                ImageUrl = imageUrl
+            });
         }
 
     }
