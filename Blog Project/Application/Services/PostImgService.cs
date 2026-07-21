@@ -9,6 +9,7 @@ namespace Blog_Project.Application.Services
     {
        
         private readonly IUnitOfWork _unitOfWork;
+        private readonly LocalFileStorageService _fileStorageService;
         public async Task<string> UploadPostImageAsync(int userId, PostImageDto imageDto)
         {
             {
@@ -24,30 +25,12 @@ namespace Blog_Project.Application.Services
                 if (imageDto.ImageFile == null || imageDto.ImageFile.Length == 0)
                     throw new Exception("Invalid image.");
 
-                var extension = Path.GetExtension(imageDto.ImageFile.FileName);
-
-                var fileName = $"{Guid.NewGuid()}{extension}";
-
-                var folder = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "wwwroot",
-                    "images",
-                    "posts");
-
-                if (!Directory.Exists(folder))
-                    Directory.CreateDirectory(folder);
-
-                var filePath = Path.Combine(folder, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageDto.ImageFile.CopyToAsync(stream);
-                }
+               var imgpath = await _fileStorageService.SaveFileAsync(imageDto.ImageFile,"posts");
 
                 var postImage = new PostImage
                 {
                     PostId = imageDto.PostId,
-                    ImageUrl = $"/images/posts/{fileName}"
+                    ImageUrl = imgpath
                 };
 
                 await _unitOfWork.Repository<PostImage, int>()
