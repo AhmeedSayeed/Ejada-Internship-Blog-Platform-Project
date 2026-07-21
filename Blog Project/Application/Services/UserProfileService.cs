@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Blog_Project.Application.Services
 {
-    public class UserProfileService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IMapper mapper) : IUserProfileService
+    public class UserProfileService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, 
+        IMapper mapper, IFileStorageService fileStorageService) : IUserProfileService
     {
         public async Task<Result<MyProfileResponseDto>> GetMyProfileAsync(int userId)
         {
@@ -49,6 +50,31 @@ namespace Blog_Project.Application.Services
             await userManager.UpdateAsync(user);
 
             return Result<bool>.Success(true);
+        }
+
+        public async Task<Result<string>> UpdateProfileImageAsync(int userId, IFormFile file)
+        {
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            if (user is null)
+                return Result<string>.Failure(new Error("User.NotFound", "The user with the specified ID does not exist."));
+
+            if (!string.IsNullOrEmpty(user.ProfileImageUrl))
+                fileStorageService.DeleteFile(user.ProfileImageUrl);
+
+            string url;
+            try
+            {
+                url = await fileStorageService.SaveFileAsync(file, "profiles");
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure(new Error("File.Invalid", ex.Message));
+            }
+
+            user.ProfileImageUrl = url;
+            await userManager.UpdateAsync(user);
+
+            return Result<string>.Success(url);
         }
 
         public async Task<Result<PublicProfileResponseDto>> GetPublicProfileAsync(int targetUserId)

@@ -53,6 +53,26 @@ namespace Blog_Project.Api.Controllers
             return NoContent();
         }
 
+        // POST api/<UsersController>/me/profile-image
+        [HttpPost("me/profile-image")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfileImage(IFormFile file)
+        {
+            var id = GetUserId();
+
+            var result = await userProfileService.UpdateProfileImageAsync(id, file);
+            if (!result.IsSuccess)
+            {
+                if (result.Error.Code == "User.NotFound")
+                    return NotFound(result.Error);
+
+                if (result.Error.Code == "File.Invalid")
+                    return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get([FromRoute] int id)

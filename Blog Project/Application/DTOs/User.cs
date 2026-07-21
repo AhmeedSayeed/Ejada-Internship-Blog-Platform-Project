@@ -82,6 +82,12 @@ public record PublicProfileResponseDto
     public IEnumerable<PostDto>? Posts { get; init; } = new List<PostDto>();
 }
 
+// Used for POST /api/users/me/profile-image
+public record ProfileImageResponseDto
+{
+    public string Url { get; init; }
+}
+
 // Used for Following and Followers endpoints
 public record UserSummaryDto
 {
