@@ -23,7 +23,7 @@ namespace Blog_Project.Application.Services
                     throw new Exception(ErrorMessages.UnauthorizedPostUpdate);
 
                 if (imageDto.ImageFile == null || imageDto.ImageFile.Length == 0)
-                    throw new Exception("Invalid image.");
+                    throw new Exception(ErrorMessages.InvalidImg);
 
                var imgpath = await _fileStorageService.SaveFileAsync(imageDto.ImageFile,"posts");
 

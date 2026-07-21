@@ -30,7 +30,9 @@ namespace Blog_Project.Middlewares
 
                     ErrorMessages.UnauthorizedPostDelete =>
                         StatusCodes.Status403Forbidden,
+
                         ErrorMessages.DraftOnly => StatusCodes.Status400BadRequest,
+                        ErrorMessages.InvalidImg => StatusCodes.Status400BadRequest,
                     _ => StatusCodes.Status500InternalServerError
                 };
 

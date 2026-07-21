@@ -14,5 +14,8 @@
 
         public const string DraftOnly =
             "Only draft posts can be submitted.";
+        public const string InvalidImg =
+       "Invalid image.";
+        
     }
 }
