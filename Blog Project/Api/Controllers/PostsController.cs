@@ -16,7 +16,7 @@ namespace Blog_Project.Api.Controllers
             _postService = postService;
         }
         [HttpPost]
-        [Authorize]
+        [Authorize("Author")]
         public async Task<ActionResult<PostDto>> CreatePost(CreatePostDto postDto)
         {
             foreach (var claim in User.Claims)
@@ -34,7 +34,7 @@ namespace Blog_Project.Api.Controllers
             return Ok(post);
         }
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PostDto>>> GetAllPosts()
         {
             var post= await _postService.GetAllPostsAsync();
@@ -42,6 +42,7 @@ namespace Blog_Project.Api.Controllers
         }
         [HttpGet]
         [Route("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<PostDto>> GetPostById(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
@@ -49,6 +50,7 @@ namespace Blog_Project.Api.Controllers
         }
         [HttpPut]
         [Route("Submet/{id}")]
+        [Authorize("Author")]
         public async Task<ActionResult<PostDto>> SubmitPostById(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
@@ -61,6 +63,7 @@ namespace Blog_Project.Api.Controllers
         }
         [HttpPut]
         [Route("Approve/{id}")]
+        [Authorize("Admin")]
         public async Task<ActionResult<PostDto>> ApprovePostById(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
@@ -72,6 +75,7 @@ namespace Blog_Project.Api.Controllers
         }
         [HttpPut]
         [Route("Update")]
+        [Authorize("Author")]
         public async Task<ActionResult<UpdatePostDto>> UpdatePost(UpdatePostDto postDto)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -82,6 +86,7 @@ namespace Blog_Project.Api.Controllers
         }
         [HttpDelete]
         [Route("{id}")]
+        [Authorize("Author")]
         public async Task<ActionResult> DeletePost(int id)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -93,6 +98,7 @@ namespace Blog_Project.Api.Controllers
         }
         [HttpPut]
         [Route("Reject/{id}")]
+        [Authorize("Admin")]
         public async Task<ActionResult<PostDto>> RejectPostById(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);

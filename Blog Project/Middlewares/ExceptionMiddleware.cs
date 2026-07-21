@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Blog_Project.Domain.Constants;
+using System.Net;
 using System.Text.Json;
 
 namespace Blog_Project.Middlewares
@@ -6,6 +7,7 @@ namespace Blog_Project.Middlewares
     public class ExceptionMiddleware(RequestDelegate next)
     {
         private readonly RequestDelegate _next = next;
+        
 
         public async Task InvokeAsync(HttpContext context)
         {
@@ -19,16 +21,16 @@ namespace Blog_Project.Middlewares
 
                 context.Response.StatusCode = ex.Message switch
                 {
-                    "Post not found." => StatusCodes.Status404NotFound,
-                    "Author not found." => StatusCodes.Status404NotFound,
-                    "Category not found." => StatusCodes.Status404NotFound,
+                    ErrorMessages.PostNotFound => StatusCodes.Status404NotFound,
+                    ErrorMessages.AuthorNotFound => StatusCodes.Status404NotFound,
+                    ErrorMessages.CategoryNotFound => StatusCodes.Status404NotFound,
 
-                    "You are not authorized to update this post." =>
+                    ErrorMessages.UnauthorizedPostUpdate =>
                         StatusCodes.Status403Forbidden,
 
-                    "You are not authorized to delete this post." =>
+                    ErrorMessages.UnauthorizedPostDelete =>
                         StatusCodes.Status403Forbidden,
-
+                        ErrorMessages.DraftOnly => StatusCodes.Status400BadRequest,
                     _ => StatusCodes.Status500InternalServerError
                 };
 

@@ -1,4 +1,5 @@
-﻿using Blog_Project.Domain.Enums;
+﻿using Blog_Project.Domain.Constants;
+using Blog_Project.Domain.Enums;
 using Blog_Project.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -24,7 +25,7 @@ namespace Blog_Project.Application.Services
             // Validation
             var author = await _userManager.FindByIdAsync(authorId.ToString());
             if (author == null)
-                throw new Exception("Author not found.");
+                throw new Exception(ErrorMessages.AuthorNotFound);
 
             if (postDto.CategoryId.HasValue)
             {
@@ -32,7 +33,7 @@ namespace Blog_Project.Application.Services
                     .GetByIdAsync(postDto.CategoryId.Value);
 
                 if (category == null)
-                    throw new Exception("Category not found.");
+                    throw new Exception(ErrorMessages.CategoryNotFound);
             }
 
             post.AuthorId = authorId;
@@ -63,10 +64,10 @@ namespace Blog_Project.Application.Services
                 .GetByIdAsync(postDto.PostId);
 
             if (post == null)
-                throw new Exception("Post not found.");
+                throw new Exception(ErrorMessages.PostNotFound);
 
             if (post.AuthorId != userId)
-                throw new Exception("You are not authorized to update this post.");
+                throw new Exception(ErrorMessages.UnauthorizedPostUpdate);
 
             _mapper.Map(postDto, post);
 
@@ -85,10 +86,10 @@ namespace Blog_Project.Application.Services
                 .GetByIdAsync(postId);
 
             if (post == null)
-                throw new Exception("Post not found.");
+                throw new Exception(ErrorMessages.PostNotFound);
 
             if (post.AuthorId != userId)
-                throw new Exception("You are not authorized to delete this post.");
+                throw new Exception(ErrorMessages.UnauthorizedPostDelete);
 
             await _unitOfWork.Repository<Post, int>()
                 .DeleteByIdAsync(postId);
@@ -112,7 +113,7 @@ namespace Blog_Project.Application.Services
                 .GetByIdAsync(postId);
 
             if (post == null)
-                throw new Exception("Post not found.");
+                throw new Exception(ErrorMessages.PostNotFound);
 
             return _mapper.Map<PostDetailsDto>(post);
         }
@@ -136,10 +137,10 @@ namespace Blog_Project.Application.Services
                 .FirstOrDefaultAsync(p => p.Id == postId && p.AuthorId == userId);
 
             if (post == null)
-                throw new Exception("Post not found.");
+                throw new Exception(ErrorMessages.PostNotFound);
 
             if (post.Status != PostStatus.Draft)
-                throw new Exception("Only draft posts can be submitted.");
+                throw new Exception(ErrorMessages.DraftOnly);
 
             post.Status = PostStatus.PendingApproval;
             post.SubmittedAt = DateTime.UtcNow;
@@ -156,7 +157,7 @@ namespace Blog_Project.Application.Services
             var post = await _unitOfWork.Repository<Post, int>()
                 .FirstOrDefaultAsync(p => p.Id == PostId && p.Status == PostStatus.PendingApproval);
             if (post == null)
-                throw new Exception("Post not found or not pending approval.");
+                throw new Exception(ErrorMessages.PostNotFound);
 
             post.Status = PostStatus.Approved;
             _unitOfWork.Repository<Post, int>().Update(post);
@@ -173,7 +174,7 @@ namespace Blog_Project.Application.Services
             var post = await _unitOfWork.Repository<Post, int>()
                 .FirstOrDefaultAsync(p => p.Id == PostId && p.Status == PostStatus.PendingApproval);
             if (post == null)
-                throw new Exception("Post not found or not pending approval.");
+                throw new Exception(ErrorMessages.PostNotFound);
 
             post.Status = PostStatus.Approved;
             _unitOfWork.Repository<Post, int>().Update(post);
