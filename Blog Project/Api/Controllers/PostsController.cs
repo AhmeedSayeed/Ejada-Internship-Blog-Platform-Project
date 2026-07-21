@@ -49,14 +49,14 @@ namespace Blog_Project.Api.Controllers
         }
         [HttpPut]
         [Route("Submet/{id}")]
-        public async Task<ActionResult<PostDto>> SubmetPostById(int id)
+        public async Task<ActionResult<PostDto>> SubmitPostById(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
             if (userId == 0)
             { return Unauthorized(); }
-            _postService.SubmitPostAsync(id, userId);
+            await _postService.SubmitPostAsync(id, userId);
             return Ok(post);
         }
         [HttpPut]
@@ -67,7 +67,7 @@ namespace Blog_Project.Api.Controllers
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             if (userId == 0)
             { return Unauthorized(); }
-            _postService.ApprovePostAsync(id, userId);
+            await _postService.ApprovePostAsync(id, userId);
             return Ok(post);
         }
         [HttpPut]
