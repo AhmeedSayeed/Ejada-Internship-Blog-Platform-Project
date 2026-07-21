@@ -145,4 +145,6 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntit
 
     private IQueryable<TEntity> ApplySpec(ISpecification<TEntity> spec, bool applyPaging = true)
         => SpecificationEvaluator<TEntity>.GetQuery(DbSet.AsQueryable(), spec, applyPaging);
+
+    
 }

@@ -7,12 +7,14 @@ using Blog_Project.Application.Services;
 using Blog_Project.Data;
 using Blog_Project.Domain.Models;
 using Blog_Project.Extensions;
+using Blog_Project.Middlewares;
 using Infrastructure.Repository;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 namespace Blog_Project
@@ -76,11 +78,12 @@ namespace Blog_Project
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IPostService, PostService>();
 
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
-
+            app.UseMiddleware<ExceptionMiddleware>();
             await app.SeedRolesAsync();
 
             if (app.Environment.IsDevelopment())
@@ -90,7 +93,9 @@ namespace Blog_Project
             }
 
             app.UseHttpsRedirection();
+            
 
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             app.UseAuthentication();
             app.UseAuthorization();
 
