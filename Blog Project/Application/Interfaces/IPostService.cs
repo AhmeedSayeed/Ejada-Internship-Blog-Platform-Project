@@ -11,6 +11,7 @@ namespace Blog_Project.Application.Interfaces
 
         Task<PostDto?> SubmitPostAsync(int PostId, int UserId);
         Task<PostDto?> ApprovePostAsync(int PostId, int UserId);
+        Task<PostDto?> RejectPostAsync(int PostId, int UserId);
 
         Task<IEnumerable<PostDto>> GetAllPostsAsync();
 

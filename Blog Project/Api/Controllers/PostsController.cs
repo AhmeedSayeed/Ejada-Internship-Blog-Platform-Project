@@ -91,6 +91,17 @@ namespace Blog_Project.Api.Controllers
             return Ok(post);
 
         }
+        [HttpPut]
+        [Route("Reject/{id}")]
+        public async Task<ActionResult<PostDto>> RejectPostById(int id)
+        {
+            var post = await _postService.GetPostByIdAsync(id);
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            if (userId == 0)
+            { return Unauthorized(); }
+            await _postService.RejectPostAsync(id, userId);
+            return Ok(post);
+        }
 
     }
 }

@@ -160,7 +160,7 @@ namespace Blog_Project.Application.Services
 
             post.Status = PostStatus.Approved;
             _unitOfWork.Repository<Post, int>().Update(post);
-            _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<PostDto>(post);
         }
         public Task<IEnumerable<PostDto>> GetPostsByTagsAsync(int TagId)
@@ -168,5 +168,17 @@ namespace Blog_Project.Application.Services
             throw new NotImplementedException();
         }
 
+        public async Task<PostDto?> RejectPostAsync(int PostId, int UserId)
+        {
+            var post = await _unitOfWork.Repository<Post, int>()
+                .FirstOrDefaultAsync(p => p.Id == PostId && p.Status == PostStatus.PendingApproval);
+            if (post == null)
+                throw new Exception("Post not found or not pending approval.");
+
+            post.Status = PostStatus.Approved;
+            _unitOfWork.Repository<Post, int>().Update(post);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<PostDto>(post);
+        }
     }
 }
