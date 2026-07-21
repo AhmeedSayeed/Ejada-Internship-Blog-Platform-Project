@@ -4,7 +4,7 @@ using Blog_Project.Application.DTOs;
 using Blog_Project.Application.Interfaces;
 using Blog_Project.Domain.Models;
 using Microsoft.AspNetCore.Identity;
-
+using Blog_Project.Application.DTOs;
 namespace Blog_Project.Application.Services
 {
     public class UserProfileService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, 

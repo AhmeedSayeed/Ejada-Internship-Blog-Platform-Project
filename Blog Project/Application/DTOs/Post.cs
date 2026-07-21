@@ -7,6 +7,7 @@ public record CreatePostDto(
 );
 
 public record UpdatePostDto(
+    int PostId,
     string Title,
     string Content,
     int? CategoryId
@@ -20,6 +21,7 @@ public record PostDto(
     int Id,
     string Title,
     string Author,
+    string Content,
     string? Category,
     double AvgRating,
     int ViewCount,

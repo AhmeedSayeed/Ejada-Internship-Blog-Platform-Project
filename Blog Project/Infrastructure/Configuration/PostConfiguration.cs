@@ -48,7 +48,7 @@ namespace Blog_Project.Data.Configuration
                 .WithMany(c => c.Posts)
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
+                ;
 
             builder.HasOne(p => p.Author)
                 .WithMany(a => a.Posts)

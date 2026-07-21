@@ -8,7 +8,9 @@ using Blog_Project.Data;
 using Blog_Project.Domain.Models;
 using Blog_Project.Extensions;
 using Blog_Project.Infrastructure.FileStrorage;
+using Blog_Project.Middlewares;
 using FluentValidation;
+using Blog_Project.Middlewares;
 using Infrastructure.Repository;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +18,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 namespace Blog_Project
@@ -84,6 +88,7 @@ namespace Blog_Project
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+            builder.Services.AddScoped<IPostService, PostService>();
 
             builder.Services.Configure<FileStorageSettings>(builder.Configuration.GetSection("FileStorageSettings"));
             builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
@@ -107,7 +112,7 @@ namespace Blog_Project
             });
 
             var app = builder.Build();
-
+            app.UseMiddleware<ExceptionMiddleware>();
             await app.SeedRolesAsync();
 
             if (app.Environment.IsDevelopment())
@@ -117,8 +122,11 @@ namespace Blog_Project
             }
 
             app.UseHttpsRedirection();
+            
 
             app.UseStaticFiles();
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             app.UseAuthentication();
             app.UseAuthorization();
