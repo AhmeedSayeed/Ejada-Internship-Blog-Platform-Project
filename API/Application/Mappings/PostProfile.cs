@@ -42,5 +42,9 @@ public class PostProfile : Profile
                 opt => opt.MapFrom(src => src.ReviewedByAdmin != null ? src.ReviewedByAdmin.Email : null))
             .ForMember(dest => dest.ReviewedByAdminProfileImageUrl,
                 opt => opt.MapFrom(src => src.ReviewedByAdmin != null ? src.ReviewedByAdmin.ProfileImageUrl : null));
+
+        CreateMap<PostImage, GetPostImageDto>();
+        CreateMap<PostImage, PostImageDto>();
+
     }
 }

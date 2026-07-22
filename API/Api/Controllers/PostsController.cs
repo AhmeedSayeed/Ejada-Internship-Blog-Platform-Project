@@ -1,3 +1,4 @@
+using API.Application.Services;
 using API.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,10 +12,11 @@ namespace API.Api.Controllers
     public class PostsController : ControllerBase
     {
         private readonly IPostService _postService;
-        private readonly IPostImgService postImgService;
-        public PostsController(IPostService postService)
+        private readonly IPostImgService _postImgService;
+        public PostsController(IPostService postService, IPostImgService postImgService)
         {
             _postService = postService;
+            _postImgService = postImgService;
         }
         [HttpPost]
         [Authorize(Roles = "Author")]
@@ -104,13 +106,13 @@ namespace API.Api.Controllers
             await _postService.RejectPostAsync(id, userId);
             return Ok(post);
         }
-        [HttpPost("{id}/images")]
+        [HttpPost("images")]
         [Authorize(Roles = "Author")]
         public async Task<IActionResult> UploadImage([FromForm]PostImageDto postimg)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            var imageUrl = await postImgService.UploadPostImageAsync(userId,postimg);
+            var imageUrl = await _postImgService.UploadPostImageAsync(userId,postimg);
 
             return Ok(new
             {
@@ -118,5 +120,22 @@ namespace API.Api.Controllers
             });
         }
 
+        [HttpGet("{PostId}/images")]
+        public async Task<IActionResult> GetImages(int PostId)
+        {
+            var images = await _postImgService.GetPostImagesAsync(PostId);
+
+            return Ok(images);
+        }
+        [HttpDelete("{imageId}/images")]
+        [Authorize(Roles = "Author")]
+        public async Task<IActionResult> DeleteImage(int imageId)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+             await _postImgService.DeletePostImageAsync(imageId, userId);
+
+            return NoContent();
+        }
     }
 }

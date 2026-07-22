@@ -9,7 +9,15 @@ namespace API.Application.Services
     {
        
         private readonly IUnitOfWork _unitOfWork;
-        private readonly LocalFileStorageService _fileStorageService;
+        private readonly IFileStorageService _fileStorageService;
+        private readonly IMapper _mapper;
+
+        public PostImgService(IUnitOfWork unitOfWork, IFileStorageService fileStorageService,IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _fileStorageService = fileStorageService;
+            _mapper = mapper;
+        }
         public async Task<string> UploadPostImageAsync(int userId, PostImageDto imageDto)
         {
             {
@@ -40,6 +48,37 @@ namespace API.Application.Services
 
                 return postImage.ImageUrl;
             }
+        }
+        public async Task<List<GetPostImageDto>> GetPostImagesAsync(int postId)
+        {
+            var post = await _unitOfWork.Repository<Post, int>()
+                .GetByIdAsync(postId);
+
+            if (post == null)
+                throw new Exception(ErrorMessages.PostNotFound);
+
+            var images = await _unitOfWork.Repository<PostImage, int>()
+                .FindAsync(i => i.PostId == postId);
+
+            return _mapper.Map<List<GetPostImageDto>>(images);
+        }
+
+        public async Task DeletePostImageAsync(int imageId, int userId)
+        {
+            var image = await _unitOfWork.Repository<PostImage, int>()
+                .GetByIdAsync(imageId, includes: p => p.Post);
+
+            if (image == null)
+                throw new Exception(ErrorMessages.InvalidImg);
+
+            if (image.Post.AuthorId != userId)
+                throw new Exception(ErrorMessages.UnauthorizedPostUpdate);
+
+            _fileStorageService.DeleteFile(image.ImageUrl);
+
+             _unitOfWork.Repository<PostImage, int>().Remove(image);
+
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

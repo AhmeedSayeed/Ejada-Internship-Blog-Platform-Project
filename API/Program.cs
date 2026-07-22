@@ -91,6 +91,8 @@ namespace API
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();
             builder.Services.AddScoped<IPostService, PostService>();
+            builder.Services.AddScoped<IPostImgService ,PostImgService>();
+
 
             builder.Services.Configure<FileStorageSettings>(builder.Configuration.GetSection("FileStorageSettings"));
             builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
