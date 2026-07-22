@@ -17,7 +17,7 @@ namespace API.Api.Controllers
             _postService = postService;
         }
         [HttpPost]
-        [Authorize(Roles ="Author")]
+        [Authorize(Roles = "Author")]
         public async Task<ActionResult<PostDto>> CreatePost(CreatePostDto postDto)
         {
 
@@ -46,7 +46,7 @@ namespace API.Api.Controllers
         }
         [HttpPut]
         [Route("{id}/Submet")]
-        [Authorize("Author")]
+        [Authorize(Roles = "Author")]
         public async Task<ActionResult<PostDto>> SubmitPostById(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
@@ -59,7 +59,7 @@ namespace API.Api.Controllers
         }
         [HttpPut]
         [Route("{id}/Approve")]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<PostDto>> ApprovePostById(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
@@ -71,7 +71,7 @@ namespace API.Api.Controllers
         }
         [HttpPut]
         [Route("Update")]
-        [Authorize("Author")]
+        [Authorize(Roles = "Author")]
         public async Task<ActionResult<UpdatePostDto>> UpdatePost(UpdatePostDto postDto)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -82,7 +82,7 @@ namespace API.Api.Controllers
         }
         [HttpDelete]
         [Route("{id}")]
-        [Authorize("Author")]
+        [Authorize(Roles = "Author")]
         public async Task<ActionResult> DeletePost(int id)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -94,7 +94,7 @@ namespace API.Api.Controllers
         }
         [HttpPut]
         [Route("{id}/Reject")]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<PostDto>> RejectPostById(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
