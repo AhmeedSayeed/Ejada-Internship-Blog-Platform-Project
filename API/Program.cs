@@ -82,6 +82,8 @@ namespace API
                 config.AddProfile<PostProfile>();
             });
 
+           
+
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
             builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
@@ -114,6 +116,9 @@ namespace API
             var app = builder.Build();
             app.UseMiddleware<ExceptionMiddleware>();
             await app.SeedRolesAsync();
+
+            var mapper = app.Services.GetRequiredService<IMapper>();
+            //mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
             if (app.Environment.IsDevelopment())
             {

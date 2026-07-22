@@ -25,7 +25,7 @@ public record PostDto(
     string? Category,
     double AvgRating,
     int ViewCount,
-    DateTime LastUpdateAt
+    DateTime LastUpdatedAt
 );
 
 public record PostDetailsDto(

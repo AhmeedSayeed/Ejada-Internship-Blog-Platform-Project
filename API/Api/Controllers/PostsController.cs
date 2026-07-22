@@ -17,14 +17,9 @@ namespace API.Api.Controllers
             _postService = postService;
         }
         [HttpPost]
-        [Authorize("Author")]
+        [Authorize(Roles ="Author")]
         public async Task<ActionResult<PostDto>> CreatePost(CreatePostDto postDto)
         {
-            foreach (var claim in User.Claims)
-            {
-                Console.WriteLine($"{claim.Type} = {claim.Value}");
-            }
-       
 
             int userId = int.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!
@@ -50,7 +45,7 @@ namespace API.Api.Controllers
             return Ok(post);
         }
         [HttpPut]
-        [Route("Submet/{id}")]
+        [Route("{id}/Submet")]
         [Authorize("Author")]
         public async Task<ActionResult<PostDto>> SubmitPostById(int id)
         {
@@ -63,7 +58,7 @@ namespace API.Api.Controllers
             return Ok(post);
         }
         [HttpPut]
-        [Route("Approve/{id}")]
+        [Route("{id}/Approve")]
         [Authorize("Admin")]
         public async Task<ActionResult<PostDto>> ApprovePostById(int id)
         {
@@ -98,7 +93,7 @@ namespace API.Api.Controllers
 
         }
         [HttpPut]
-        [Route("Reject/{id}")]
+        [Route("{id}/Reject")]
         [Authorize("Admin")]
         public async Task<ActionResult<PostDto>> RejectPostById(int id)
         {

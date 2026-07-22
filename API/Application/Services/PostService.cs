@@ -47,7 +47,7 @@ namespace API.Application.Services
 
             await _unitOfWork.SaveChangesAsync();
 
-            return _mapper.Map<PostDto>(value);
+            return _mapper.Map<PostDto>(post);
         }
         public async Task<PostDto?> UpdatePostAsync(UpdatePostDto postDto, int userId)
         {

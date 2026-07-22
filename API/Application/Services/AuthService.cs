@@ -45,7 +45,7 @@ namespace API.Application.Services
                 return new AuthResult { IsSuccess = false, AccessToken = null, RefreshToken = null, Errors = errors };
             }
 
-            await _userManager.AddToRoleAsync(user, "Reader");
+            await _userManager.AddToRoleAsync(user, registerRequest.Role);
 
             return new AuthResult { IsSuccess = true, AccessToken = null, RefreshToken = null, Errors = null };
         }
