@@ -1,0 +1,24 @@
+using API.Domain.Enums;
+
+namespace API.Domain.Models
+{
+    public class Comment
+    {
+        public int Id { get; set; }
+        public string Content { get; set; }
+        public CommentStatus Status { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+
+        public int PostId { get; set; }
+        public Post Post { get; set; }
+
+        public int UserId { get; set; }
+        public ApplicationUser User { get; set; }
+
+        public int? ParentCommentId { get; set; }
+        public Comment? ParentComment { get; set; }
+
+        public ICollection<Comment> Replies { get; set; } = new List<Comment>();
+    }
+}

@@ -1,4 +1,5 @@
 <Solution>
-  <Project Path="Blog Project/API.csproj" />
+  <Project Path="API/API.csproj" />
+  <Project Path="Contract/Contract.csproj" Id="acaa1928-880f-4707-837f-eaf2edb1fcf0" />
   <Project Path="Web/Web.csproj" Id="a443efca-84e0-448f-a9db-13cdbe3600cb" />
 </Solution>
