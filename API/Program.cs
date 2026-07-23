@@ -1,7 +1,5 @@
 
-using Application.Interfaces;
 using API.Application.Filters;
-using API.Application.Interfaces;
 using API.Application.Mappings;
 using API.Application.Services;
 using API.Data;
@@ -10,7 +8,6 @@ using API.Extensions;
 using API.Infrastructure.FileStrorage;
 using API.Middlewares;
 using FluentValidation;
-using API.Middlewares;
 using Infrastructure.Repository;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,7 +15,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using System.IdentityModel.Tokens.Jwt;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
