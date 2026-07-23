@@ -19,7 +19,7 @@ namespace Blog_Project.Api.Controllers
 
         [HttpGet]
         [Route("{postId}/comments")]
-        public async Task<ActionResult >GetCommentsAsync(int postId) {
+        public async Task<ActionResult>GetCommentsAsync(int postId) {
 
             var comments = await _commentService.GetCommentsAsync(postId);
             return Ok(comments);
@@ -61,7 +61,7 @@ namespace Blog_Project.Api.Controllers
         [HttpPut]
         [HttpPut]
         [Route("{id}/Approve")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<CommentDetailsDto>> ApproveCommentById(int id)
         {
 
