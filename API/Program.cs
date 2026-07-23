@@ -1,5 +1,7 @@
 
 using API.Application.Filters;
+using API.Application.Interfaces;
+using API.Application.Mapping;
 using API.Application.Mappings;
 using API.Application.Services;
 using API.Data;
@@ -7,6 +9,10 @@ using API.Domain.Models;
 using API.Extensions;
 using API.Infrastructure.FileStrorage;
 using API.Middlewares;
+using API.Middlewares;
+using Application.Interfaces;
+using Blog_Project.Application.Interfaces;
+using Blog_Project.Application.Services;
 using FluentValidation;
 using Infrastructure.Repository;
 using Infrastructure.UnitOfWork;
@@ -76,6 +82,7 @@ namespace API
             {
                 config.AddProfile<UserProfile>();
                 config.AddProfile<PostProfile>();
+                config.AddProfile<CommentProfile>();
             });
 
            
@@ -88,6 +95,7 @@ namespace API
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<IPostImgService ,PostImgService>();
+            builder.Services.AddScoped<ICommentService, CommentService>();
 
 
             builder.Services.Configure<FileStorageSettings>(builder.Configuration.GetSection("FileStorageSettings"));

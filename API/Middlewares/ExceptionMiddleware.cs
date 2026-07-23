@@ -24,15 +24,19 @@ namespace API.Middlewares
                     ErrorMessages.PostNotFound => StatusCodes.Status404NotFound,
                     ErrorMessages.AuthorNotFound => StatusCodes.Status404NotFound,
                     ErrorMessages.CategoryNotFound => StatusCodes.Status404NotFound,
+                    ErrorMessages.CommentNotFound => StatusCodes.Status404NotFound,
 
                     ErrorMessages.UnauthorizedPostUpdate =>
                         StatusCodes.Status403Forbidden,
-
+                    ErrorMessages.Unauthorized =>
+                    StatusCodes.Status403Forbidden,
                     ErrorMessages.UnauthorizedPostDelete =>
                         StatusCodes.Status403Forbidden,
 
                         ErrorMessages.DraftOnly => StatusCodes.Status400BadRequest,
-                        ErrorMessages.InvalidImg => StatusCodes.Status400BadRequest,
+                    ErrorMessages.InvalidComment => StatusCodes.Status400BadRequest,
+
+                    ErrorMessages.InvalidImg => StatusCodes.Status400BadRequest,
                     _ => StatusCodes.Status500InternalServerError
                 };
 

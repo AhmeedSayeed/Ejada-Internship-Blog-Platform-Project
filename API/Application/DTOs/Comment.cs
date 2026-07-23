@@ -2,17 +2,17 @@ namespace API.Application.DTOs;
 
 public record CreateCommentDto(
     string Content,
-    int PostId,
-    int UserId,
     int? ParentCommentId
 );
 
 public record UpdateCommentDto(
-    int Id,
+    int CommentId,
+    int PostId,
     string Content
  );
 
 public record UpdateCommentStatusDto(
+    int CommentId,
     string Status
  );
 
