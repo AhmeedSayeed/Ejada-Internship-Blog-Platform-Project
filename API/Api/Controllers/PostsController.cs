@@ -51,12 +51,11 @@ namespace API.Api.Controllers
         [Authorize(Roles = "Author")]
         public async Task<ActionResult<PostDto>> SubmitPostById(int id)
         {
-            var post = await _postService.GetPostByIdAsync(id);
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
             if (userId == 0)
             { return Unauthorized(); }
-            await _postService.SubmitPostAsync(id, userId);
+            var post = await _postService.SubmitPostAsync(id, userId);
             return Ok(post);
         }
         [HttpPut]
@@ -64,11 +63,11 @@ namespace API.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<PostDto>> ApprovePostById(int id)
         {
-            var post = await _postService.GetPostByIdAsync(id);
+       
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             if (userId == 0)
             { return Unauthorized(); }
-            await _postService.ApprovePostAsync(id, userId);
+            var post =await _postService.ApprovePostAsync(id, userId);
             return Ok(post);
         }
         [HttpPut]

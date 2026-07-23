@@ -2,14 +2,16 @@
 {
     public interface ICommentService
     {
-        Task<CommentDetailsDto> CreateCommentAsync(CreateCommentDto commentDto, int userId);
+        Task<CommentDetailsDto> CreateCommentAsync(int postId,CreateCommentDto commentDto, int userId);
         Task<CommentDetailsDto?> UpdateCommentAsync(UpdateCommentDto commentDto, int userId);
 
-        Task<CommentDetailsDto> GetCommentsAsync(int postId);
+        Task<List<CommentDetailsDto>> GetCommentsAsync(int postId);
 
-        Task<UpdateCommentStatusDto?> ApproveCommentAsync(int CommentId);
-        Task<UpdateCommentStatusDto?> RejectCommentAsync(int CommentId);
-        Task DeleteCommentAsync(int CommentId, int userId);
+        Task<CommentDetailsDto?> ApproveCommentAsync(int CommentId);
+        Task<CommentDetailsDto?> RejectCommentAsync(int CommentId);
+    
+        Task<CommentDetailsDto?> FlagCommentAsync(int CommentId);
+        Task<bool> DeleteCommentAsync(int CommentId, int userId);
 
     }
 }

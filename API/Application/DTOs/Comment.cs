@@ -2,7 +2,6 @@ namespace API.Application.DTOs;
 
 public record CreateCommentDto(
     string Content,
-    int PostId,
     int? ParentCommentId
 );
 

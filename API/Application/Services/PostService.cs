@@ -114,20 +114,24 @@ namespace API.Application.Services
 
             if (post == null)
                 throw new Exception(ErrorMessages.PostNotFound);
+            if (post.Status != PostStatus.Approved)
+            {
+                throw new Exception(ErrorMessages.PostNotFound);
+            }
 
             return _mapper.Map<PostDetailsDto>(post);
         }
 
         public async Task<IEnumerable<PostDto>> GetPostsByAuthorIdAsync(int AuthorId)
         {
-            var posts = await _unitOfWork.Repository<Post, int>().FindAsync(p => p.AuthorId == AuthorId);
+            var posts = await _unitOfWork.Repository<Post, int>().FindAsync(p => p.AuthorId == AuthorId&&p.Status== PostStatus.Approved);
 
             return _mapper.Map<IEnumerable<PostDto>>(posts);
         }
 
         public async Task<IEnumerable<PostDto>> GetPostsByCategoryIdAsync(int CategoryId)
         {
-            var posts = await _unitOfWork.Repository<Post, int>().FindAsync(p => p.CategoryId == CategoryId);
+            var posts = await _unitOfWork.Repository<Post, int>().FindAsync(p => p.CategoryId == CategoryId && p.Status == PostStatus.Approved);
 
             return _mapper.Map<IEnumerable<PostDto>>(posts);
         }
