@@ -26,6 +26,10 @@ namespace API.Application.Validation
                            !password.Any(char.IsWhiteSpace);
                 }).WithMessage("Password must contain at least one uppercase letter, " +
                 "one lowercase letter, one number, and one special character.");
+
+            RuleFor(x => x.Role)
+                .Must(role => role == "Reader" || role == "Author")
+                .WithMessage("Role must be either 'Reader' or 'Author'.");
         }
     }
 }
