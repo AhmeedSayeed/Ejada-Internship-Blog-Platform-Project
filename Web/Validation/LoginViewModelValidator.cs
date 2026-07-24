@@ -8,10 +8,12 @@ namespace Web.Validation
         public LoginViewModelValidator() 
         {
             RuleFor(x => x.Email)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Email is required.")
                 .EmailAddress().WithMessage("Invalid email format.");
 
             RuleFor(x => x.Password)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Password is required.");
         }
     }
