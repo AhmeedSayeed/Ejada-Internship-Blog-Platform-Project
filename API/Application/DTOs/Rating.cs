@@ -1,13 +1,10 @@
 namespace API.Application.DTOs;
 
 public record CreateRatingDto(
-    int Score,
-    int PostId,
-    int UserId
+    int Score
 
 );
 public record UpdateRatingDto(
-    int Id,
     int Score
 );
 public record RatingDetailsDto(
