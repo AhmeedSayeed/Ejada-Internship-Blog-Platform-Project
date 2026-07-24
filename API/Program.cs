@@ -12,6 +12,7 @@ using API.Middlewares;
 using API.Middlewares;
 using Application.Interfaces;
 using Blog_Project.Application.Interfaces;
+using Blog_Project.Application.Mappings;
 using Blog_Project.Application.Services;
 using FluentValidation;
 using Infrastructure.Repository;
@@ -93,6 +94,8 @@ namespace API
                 config.AddProfile<UserProfile>();
                 config.AddProfile<PostProfile>();
                 config.AddProfile<CommentProfile>();
+                config.AddProfile<LikeProfile>();
+
             });
 
            
@@ -106,6 +109,7 @@ namespace API
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<IPostImgService ,PostImgService>();
             builder.Services.AddScoped<ICommentService, CommentService>();
+            builder.Services.AddScoped<ILikeService , LikeService>() ;
 
 
             builder.Services.Configure<FileStorageSettings>(builder.Configuration.GetSection("FileStorageSettings"));
