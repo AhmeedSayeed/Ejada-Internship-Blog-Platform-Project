@@ -18,12 +18,12 @@ namespace API.Api.Controllers
         public async Task<IActionResult> Register(RegisterRequestDto dto)
         {
             if (!AppRoles.SelfRegisterable.Contains(dto.Role))
-                return BadRequest(new { Message = "Invalid role for self-registration." });
+                return BadRequest(ApiErrors.From(new[] { "You can only register as Reader or Author." }, "Invalid role."));
 
             var result = await authService.RegisterAsync(dto);
 
             if (!result.IsSuccess)
-                return BadRequest(result.Errors);
+                return BadRequest(ApiErrors.From(result.Errors, "Registration failed."));
 
             return Ok(new { Message = "User registered successfully." });
         }
@@ -36,7 +36,7 @@ namespace API.Api.Controllers
             var result = await authService.LoginAsync(dto);
 
             if (!result.IsSuccess)
-                return Unauthorized(result.Errors);
+                return Unauthorized(ApiErrors.From(result.Errors, "Login failed."));
 
             return Ok(new AuthResponseDto { AccessToken = result.AccessToken!, RefreshToken = result.RefreshToken! });
         }
@@ -49,7 +49,7 @@ namespace API.Api.Controllers
             var result = await authService.RefreshTokenAsync(dto.RefreshToken);
 
             if (!result.IsSuccess)
-                return Unauthorized(result.Errors);
+                return Unauthorized(ApiErrors.From(result.Errors, "Token refresh failed."));
 
             return Ok(new AuthResponseDto { AccessToken = result.AccessToken!, RefreshToken = result.RefreshToken! });
         }
@@ -62,7 +62,7 @@ namespace API.Api.Controllers
             var result = await authService.LogoutAsync(dto.RefreshToken);
 
             if (!result)
-                return BadRequest(new { Message = "Invalid Refresh Token" });
+                return BadRequest(ApiErrors.From(new[] { "Invalid refresh token." }, "Logout failed."));
 
             return NoContent();
         }

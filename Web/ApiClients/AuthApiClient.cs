@@ -1,4 +1,5 @@
 ﻿using Contract;
+using System.Text.Json;
 
 namespace Web.ApiClients
 {
@@ -57,12 +58,17 @@ namespace Web.ApiClients
         {
             try
             {
-                var errorResult = await response.Content.ReadFromJsonAsync<ApiResponse<T>>();
-                return errorResult ?? new ApiResponse<T> { IsSuccess = false, ErrorMessage = "Unknown error occurred." };
+                var error = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+                return new ApiResponse<T>
+                {
+                    IsSuccess = false,
+                    ErrorMessage = error?.Title ?? "Something went wrong.",
+                    Errors = error?.Errors?.Any() == true ? error.Errors : new[] { $"HTTP {(int)response.StatusCode}" }
+                };
             }
-            catch
+            catch (JsonException)
             {
-                return new ApiResponse<T> { IsSuccess = false, ErrorMessage = $"HTTP {response.StatusCode}" };
+                return new ApiResponse<T> { IsSuccess = false, ErrorMessage = $"HTTP {(int)response.StatusCode}", Errors = Array.Empty<string>() };
             }
         }
     }

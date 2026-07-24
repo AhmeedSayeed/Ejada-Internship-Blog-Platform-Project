@@ -18,6 +18,7 @@ using Infrastructure.Repository;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -36,6 +37,15 @@ namespace API
             builder.Services.AddControllers(options =>
             {
                 options.Filters.Add<ValidationFilter>();
+            });
+
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errors = context.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return new BadRequestObjectResult(new ApiErrorResponse { Title = "Validation failed.", Errors = errors });
+                };
             });
 
 

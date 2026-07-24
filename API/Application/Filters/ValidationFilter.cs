@@ -27,7 +27,12 @@ namespace API.Application.Filters
                     if (!validationResult.IsValid)
                     {
                         // Short-circuit the pipeline immediately. The controller will not execute.
-                        context.Result = new BadRequestObjectResult(validationResult.Errors);
+                        var errors = validationResult.Errors.Select(e => e.ErrorMessage);
+                        context.Result = new BadRequestObjectResult(new ApiErrorResponse
+                        {
+                            Title = "Validation failed.",
+                            Errors = errors
+                        });
                         return;
                     }
                 }

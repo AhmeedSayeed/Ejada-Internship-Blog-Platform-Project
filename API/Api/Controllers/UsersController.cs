@@ -29,7 +29,7 @@ namespace API.Api.Controllers
 
             var result = await userProfileService.GetMyProfileAsync(id);
             if (!result.IsSuccess)
-                return NotFound(result.Error);
+                return NotFound(ApiErrors.From(result.Error));
 
             return Ok(result.Value);
         }
@@ -44,10 +44,12 @@ namespace API.Api.Controllers
             var result = await userProfileService.UpdateProfileAsync(id, dto);
             if (!result.IsSuccess)
             {
-                if (result.Error.Code == "User.NotFound")
-                    return NotFound(result.Error);
-                if (result.Error.Code == "Password.ChangeFailed")
-                    return BadRequest(result.Error);
+                return result.Error.Code switch
+                {
+                    "User.NotFound" => NotFound(ApiErrors.From(result.Error)),
+                    "Password.ChangeFailed" => BadRequest(ApiErrors.From(result.Error)),
+                    _ => BadRequest(ApiErrors.From(result.Error))
+                };
             }
 
             return NoContent();
@@ -63,11 +65,12 @@ namespace API.Api.Controllers
             var result = await userProfileService.UpdateProfileImageAsync(id, file);
             if (!result.IsSuccess)
             {
-                if (result.Error.Code == "User.NotFound")
-                    return NotFound(result.Error);
-
-                if (result.Error.Code == "File.Invalid")
-                    return BadRequest(result.Error);
+                return result.Error.Code switch
+                {
+                    "User.NotFound" => NotFound(ApiErrors.From(result.Error)),
+                    "File.Invalid" => BadRequest(ApiErrors.From(result.Error)),
+                    _ => BadRequest(ApiErrors.From(result.Error))
+                };
             }
 
             return Ok(result.Value);
@@ -79,7 +82,7 @@ namespace API.Api.Controllers
         {
             var result = await userProfileService.GetPublicProfileAsync(id);
             if (!result.IsSuccess)
-                return NotFound(result.Error);
+                return NotFound(ApiErrors.From(result.Error));
 
             return Ok(result.Value);
         }
@@ -94,17 +97,14 @@ namespace API.Api.Controllers
             var result = await userProfileService.FollowAsync(followerId, id);
             if (!result.IsSuccess)
             {
-                if (result.Error.Code == "Follower.NotFound")
-                    return NotFound(result.Error);
-
-                if (result.Error.Code == "TargetUser.NotFound")
-                    return NotFound(result.Error);
-
-                if (result.Error.Code == "Follow.Invalid")
-                    return BadRequest(result.Error);
-
-                if (result.Error.Code == "Follow.AlreadyExists")
-                    return BadRequest(result.Error);
+                return result.Error.Code switch
+                {
+                    "Follower.NotFound" => NotFound(ApiErrors.From(result.Error)),
+                    "TargetUser.NotFound" => NotFound(ApiErrors.From(result.Error)),
+                    "Follow.Invalid" => BadRequest(ApiErrors.From(result.Error)),
+                    "Follow.AlreadyExists" => BadRequest(ApiErrors.From(result.Error)),
+                    _ => BadRequest(ApiErrors.From(result.Error))
+                };
             }
 
             return Ok();
@@ -120,14 +120,13 @@ namespace API.Api.Controllers
             var result = await userProfileService.UnfollowAsync(followerId, id);
             if (!result.IsSuccess)
             {
-                if (result.Error.Code == "Follower.NotFound")
-                    return NotFound(result.Error);
-
-                if (result.Error.Code == "TargetUser.NotFound")
-                    return NotFound(result.Error);
-
-                if (result.Error.Code == "Follow.Invalid")
-                    return BadRequest(result.Error);
+                return result.Error.Code switch
+                {
+                    "Follower.NotFound" => NotFound(ApiErrors.From(result.Error)),
+                    "TargetUser.NotFound" => NotFound(ApiErrors.From(result.Error)),
+                    "Follow.NotFound" => NotFound(ApiErrors.From(result.Error)), // was missing — this was the live bug
+                    _ => BadRequest(ApiErrors.From(result.Error))
+                };
             }
 
             return Ok();
@@ -142,7 +141,7 @@ namespace API.Api.Controllers
 
             var result = await userProfileService.GetFollowingAsync(userId);
             if (!result.IsSuccess)
-                return NotFound(result.Error);
+                return NotFound(ApiErrors.From(result.Error));
 
             return Ok(result.Value);
         }
@@ -155,7 +154,7 @@ namespace API.Api.Controllers
             var result = await userProfileService.GetFollowersAsync(id);
 
             if (!result.IsSuccess)
-                return NotFound(result.Error);
+                return NotFound(ApiErrors.From(result.Error));
 
             return Ok(result.Value);
         }
