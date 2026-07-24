@@ -146,5 +146,10 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntit
     private IQueryable<TEntity> ApplySpec(ISpecification<TEntity> spec, bool applyPaging = true)
         => SpecificationEvaluator<TEntity>.GetQuery(DbSet.AsQueryable(), spec, applyPaging);
 
-    
+    public virtual async Task<int> CountAsync(
+    Expression<Func<TEntity, bool>> predicate,
+    CancellationToken ct = default)
+    {
+        return await DbSet.CountAsync(predicate, ct);
+    }
 }

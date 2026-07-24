@@ -49,4 +49,7 @@ public interface IRepository<TEntity, TKey> where TEntity : class
 
     // Soft-deletes automatically if the entity implements ISoftDelete, otherwise removes it.
     Task<bool> DeleteByIdAsync(TKey id, CancellationToken ct = default);
+    Task<int> CountAsync(
+    Expression<Func<TEntity, bool>> predicate,
+    CancellationToken ct = default);
 }
