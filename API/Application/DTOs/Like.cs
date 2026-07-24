@@ -1,6 +1,5 @@
 namespace API.Application.DTOs;
 public record CreateLikeDto(
-    int PostId,
     int UserId
 );
 //When Removing likes its useless.
