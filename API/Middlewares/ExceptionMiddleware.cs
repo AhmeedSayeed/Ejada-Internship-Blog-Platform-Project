@@ -25,6 +25,7 @@ namespace API.Middlewares
                     ErrorMessages.AuthorNotFound => StatusCodes.Status404NotFound,
                     ErrorMessages.CategoryNotFound => StatusCodes.Status404NotFound,
                     ErrorMessages.CommentNotFound => StatusCodes.Status404NotFound,
+                    ErrorMessages.RateNotFound => StatusCodes.Status404NotFound,
 
                     ErrorMessages.UnauthorizedPostUpdate =>
                         StatusCodes.Status403Forbidden,

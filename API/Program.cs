@@ -95,6 +95,7 @@ namespace API
                 config.AddProfile<PostProfile>();
                 config.AddProfile<CommentProfile>();
                 config.AddProfile<LikeProfile>();
+                config.AddProfile<RatingProfile>();
 
             });
 
@@ -110,6 +111,8 @@ namespace API
             builder.Services.AddScoped<IPostImgService ,PostImgService>();
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddScoped<ILikeService , LikeService>() ;
+            builder.Services.AddScoped<IRatingService , RatingService>() ;
+
 
 
             builder.Services.Configure<FileStorageSettings>(builder.Configuration.GetSection("FileStorageSettings"));

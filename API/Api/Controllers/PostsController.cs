@@ -1,5 +1,6 @@
 using API.Application.Services;
 using API.Data;
+using Blog_Project.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,13 @@ namespace API.Api.Controllers
     {
         private readonly IPostService _postService;
         private readonly IPostImgService _postImgService;
-        public PostsController(IPostService postService, IPostImgService postImgService)
+        private readonly IRatingService _ratingService;
+        public PostsController(IPostService postService, IPostImgService postImgService,  IRatingService ratingService)
         {
             _postService = postService;
             _postImgService = postImgService;
+            _ratingService = ratingService;
+
         }
         [HttpPost]
         [Authorize(Roles = "Author")]
@@ -135,6 +139,13 @@ namespace API.Api.Controllers
             await _postImgService.DeletePostImageAsync(imageId, userId);
 
             return NoContent();
+        }
+        [HttpGet]
+        [Route("{postId}/Rating")]
+        public async Task<ActionResult<double>> AvgRating(int postId)
+        {
+            var rating = await _ratingService.AvgRatingAsync(postId);
+            return Ok(rating);
         }
     }
 }

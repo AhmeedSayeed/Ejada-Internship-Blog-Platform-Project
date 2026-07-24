@@ -1,6 +1,7 @@
 using API.Application.DTOs;
 using API.Application.Interfaces;
 using API.Domain.Constants;
+using Blog_Project.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,8 +11,15 @@ namespace API.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IAuthService authService) : ControllerBase
+    public class AuthController: ControllerBase
     {
+        private readonly IRatingService _ratingService;
+        private readonly IAuthService authService;
+        public AuthController( IRatingService ratingService, IAuthService _authService)
+        {
+            _ratingService = ratingService;
+            authService = _authService;
+        }
         // POST api/<AuthController>/register
         [HttpPost("register")]
         [AllowAnonymous]
@@ -65,6 +73,16 @@ namespace API.Api.Controllers
                 return BadRequest(ApiErrors.From(new[] { "Invalid refresh token." }, "Logout failed."));
 
             return NoContent();
+        }
+        [HttpGet]
+        [Route("me/ratings")]
+        [Authorize(Roles = "Author")]
+        public async Task<IActionResult> GetMyRatings()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var result = await _ratingService.GetAuthorRatingsAsync(userId);
+
+            return Ok(result);
         }
     }
 }

@@ -6,7 +6,8 @@ namespace API.Domain.Constants
         public const string AuthorNotFound = "Author not found.";
         public const string CategoryNotFound = "Category not found.";
         public const string CommentNotFound = "Comment Not Found.";
-        
+        public const string RateNotFound = "Rate Not Found.";
+
         public const string CommentNotFlagged = "Comment Not Flagged.";
 
         public const string UnauthorizedPostUpdate =
