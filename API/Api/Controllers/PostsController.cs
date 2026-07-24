@@ -35,7 +35,7 @@ namespace API.Api.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PostDto>>> GetAllPosts()
         {
-            var post= await _postService.GetAllPostsAsync();
+            var post = await _postService.GetAllPostsAsync();
             return Ok(post);
         }
         [HttpGet]
@@ -47,7 +47,7 @@ namespace API.Api.Controllers
             return Ok(post);
         }
         [HttpPut]
-        [Route("{id}/Submet")]
+        [Route("{id}/Submit")]
         [Authorize(Roles = "Author")]
         public async Task<ActionResult<PostDto>> SubmitPostById(int id)
         {
@@ -63,11 +63,11 @@ namespace API.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<PostDto>> ApprovePostById(int id)
         {
-       
+
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             if (userId == 0)
             { return Unauthorized(); }
-            var post =await _postService.ApprovePostAsync(id, userId);
+            var post = await _postService.ApprovePostAsync(id, userId);
             return Ok(post);
         }
         [HttpPut]
@@ -78,7 +78,7 @@ namespace API.Api.Controllers
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             if (userId == 0)
             { return Unauthorized(); }
-            var post = await _postService.UpdatePostAsync(postDto,userId);
+            var post = await _postService.UpdatePostAsync(postDto, userId);
             return Ok(post);
         }
         [HttpDelete]
@@ -107,11 +107,11 @@ namespace API.Api.Controllers
         }
         [HttpPost("images")]
         [Authorize(Roles = "Author")]
-        public async Task<IActionResult> UploadImage([FromForm]PostImageDto postimg)
+        public async Task<IActionResult> UploadImage([FromForm] PostImageDto postimg)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            var imageUrl = await _postImgService.UploadPostImageAsync(userId,postimg);
+            var imageUrl = await _postImgService.UploadPostImageAsync(userId, postimg);
 
             return Ok(new
             {
@@ -126,13 +126,13 @@ namespace API.Api.Controllers
 
             return Ok(images);
         }
-        [HttpDelete("{imageId}/images")]
+        [HttpDelete("images/{imageId}")]
         [Authorize(Roles = "Author")]
         public async Task<IActionResult> DeleteImage(int imageId)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-             await _postImgService.DeletePostImageAsync(imageId, userId);
+            await _postImgService.DeletePostImageAsync(imageId, userId);
 
             return NoContent();
         }
